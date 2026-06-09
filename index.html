@@ -9,8 +9,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#2c3e50">
 
     <style>
         :root {
@@ -22,49 +20,28 @@
           --container-padding: 15px;
         }
         
-        * { box-sizing: border-box; }
+        * {
+          box-sizing: border-box;
+        }
         
         html, body {
-          height: 100%;
-          margin: 0;
-          padding: 0;
-          font-family: "Arial", "Hiragino Sans", "Meiryo", "Noto Serif CJK JP", Roboto, Arial, Noto Serif;
-          background: #f5f5f5;
-          color: #333;
+          height: 100%; margin: 0; padding: 0;
+          font-family: "Arial", "Hiragino Sans", "Meiryo", "Noto Serif CJK JP", sans-serif;
+          background: #f5f5f5; color: #333;
         }
         
         .header {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: var(--header-height);
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 12px 18px;
-          background: rgba(44, 62, 80, 0.95);
-          color: #fff;
-          z-index: 999;
-          box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+          position: fixed; top: 0; left: 0; right: 0; height: var(--header-height);
+          display: flex; align-items: center; justify-content: space-between;
+          padding: 12px 18px; background: rgba(44, 62, 80, 0.95); color: #fff;
+          z-index: 999; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
         }
         
-        .header-left {
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-        }
-        
+        .header-left { display: flex; flex-direction: column; gap: 4px; }
         .header-left h1 { margin: 0; font-size: 24px; }
         .header-left p { margin: 0; font-size: 12px; opacity: 0.9; }
         
-        .file-search-container {
-          display: flex;
-          gap: 12px;
-          align-items: center;
-          flex-wrap: wrap;
-        }
-
+        .file-search-container { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
         .file-buttons-wrapper { display: flex; gap: 12px; }
         .file-item { display: flex; align-items: center; gap: 6px; }
 
@@ -74,15 +51,11 @@
           border-radius: 20px; cursor: pointer; font-size: 13px; color: #fff;
           transition: all 0.2s ease; max-width: 160px; user-select: none;
         }
-        .custom-file-upload:hover {
-          background: rgba(255, 255, 255, 0.25); border-color: rgba(255, 255, 255, 0.6); transform: translateY(-1px);
-        }
+        .custom-file-upload:hover { background: rgba(255, 255, 255, 0.25); transform: translateY(-1px); }
         .custom-file-upload input[type="file"] { display: none; }
         .file-name-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .file-icon { font-size: 14px; }
-        .custom-file-upload.has-file {
-          background: rgba(46, 204, 113, 0.2); border-color: #2ecc71; color: #e8f8f5;
-        }
+        .custom-file-upload.has-file { background: rgba(46, 204, 113, 0.2); border-color: #2ecc71; color: #e8f8f5; }
 
         .clear-btn {
           display: none; cursor: pointer; color: #ff5252; font-size: 20px;
@@ -90,144 +63,108 @@
         }
         .clear-btn:hover { transform: scale(1.2); }
         
-        .action-group {
-          display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+        .action-group { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .search-box {
+          padding: 6px 12px; border-radius: 20px; border: 1px solid #ddd; background: #fff;
+          font-size: 13px; width: 180px; transition: all 0.2s ease;
         }
-
-        .search-box, .lang-select {
-          padding: 6px 12px; border-radius: 20px; border: 1px solid #ddd;
-          background: #fff; font-size: 13px; transition: all 0.2s ease;
-        }
-        .search-box { width: 180px; }
-        .lang-select { width: 130px; cursor: pointer; }
-        .search-box:focus, .lang-select:focus {
-          outline: none; border-color: #3498db; box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-        }
+        .search-box:focus { outline: none; border-color: #3498db; box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2); }
         
         .bilingual-btn, .toggle-notes-btn {
-          color: white; border: none; padding: 6px 14px; border-radius: 20px;
-          cursor: pointer; font-size: 13px; transition: all 0.2s ease;
+          background: #9b59b6; color: white; border: none; padding: 6px 14px;
+          border-radius: 20px; cursor: pointer; font-size: 13px; transition: all 0.2s ease;
         }
-        .bilingual-btn { background: #9b59b6; }
         .toggle-notes-btn { background: #3498db; }
-
         body.hide-notes .note-area { display: none !important; }
         
-        main {
-          padding: calc(var(--header-height) + 12px) var(--container-padding) 140px;
-          max-width: var(--max-width); margin: 0 auto;
-        }
-        
+        main { padding: calc(var(--header-height) + 12px) var(--container-padding) 140px; max-width: var(--max-width); margin: 0 auto; }
         #subtitles { display: block; }
         
         .row { display: block; margin: 3px 0; transition: opacity 0.2s ease; }
-        
         .subtitle {
-          background: #fff; padding: 8px 12px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-          word-break: break-word; font-size: 15px; min-height: var(--subtitle-min-height);
-          display: flex; flex-direction: row; align-items: stretch; gap: var(--gutter);
-          border: 1px solid rgba(0, 0, 0, 0.05); transition: all 0.2s ease; position: relative;
+          background: #fff; padding: 8px 12px; border-radius: 8px;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); word-break: break-word; font-size: 15px;
+          min-height: var(--subtitle-min-height); display: flex; flex-direction: row;
+          align-items: stretch; gap: var(--gutter); border: 1px solid rgba(0, 0, 0, 0.05);
+          position: relative;
         }
         .subtitle:hover { box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12); }
         .subtitle.has-written-note { border-left: 4px solid #ff9800; }
         
+        /* === 工具列按鈕 (朗讀、合併、拆分、刪除) === */
+        .row-actions {
+          position: absolute; right: 10px; top: 10px; display: flex; gap: 6px;
+          opacity: 0; transition: opacity 0.2s ease;
+        }
+        .subtitle:hover .row-actions { opacity: 1; }
+        .action-btn {
+          background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 6px;
+          cursor: pointer; font-size: 13px; color: #475569; transition: all 0.2s;
+        }
+        .action-btn:hover { background: #e2e8f0; color: #0f172a; }
+
         .text-box {
-          flex: 1; min-height: 35px; padding: 8px 12px; border-radius: 6px; border: none;
+          flex: 1; min-height: 35px; padding: 8px 12px; border-radius: 6px;
           background: #f9f9f9; font-size: 15px; line-height: 1.4; color: #222;
-          white-space: pre-wrap; word-break: break-word; display: flex; flex-direction: column;
-          align-items: stretch; box-sizing: border-box; overflow: hidden; cursor: text;
-          user-select: text; -webkit-user-select: text;
+          white-space: pre-wrap; display: flex; flex-direction: column; cursor: text;
         }
-        
-        .japanese-text {
-          font-family: "Hiragino Sans", "Hiragino Kaku Gothic Pro", "Meiryo", sans-serif;
-          font-size: 16px; color: #2c3e50; margin-bottom: 4px;
-        }
-        
-        .chinese-text {
-          font-family: "Arial", "Microsoft YaHei", sans-serif; font-size: 15px;
-          color: #666; border-top: 1px dashed #eee; padding-top: 4px; margin-top: 4px;
-        }
-        
+        .japanese-text { font-family: "Hiragino Sans", "Meiryo", sans-serif; font-size: 16px; color: #2c3e50; margin-bottom: 4px; }
+        .chinese-text { font-family: "Arial", "Microsoft YaHei", sans-serif; font-size: 15px; color: #666; border-top: 1px dashed #eee; padding-top: 4px; margin-top: 4px; }
         .single-language .chinese-text { display: none; }
         .single-language .japanese-text { margin-bottom: 0; border: none; }
         
-        .note-area {
-          display: flex; flex-direction: row; align-items: stretch; gap: 8px;
-          position: relative; min-width: 0; flex: 1;
-        }
-        
-        .note-container { flex: 1; display: flex; align-items: stretch; min-width: 0; }
-        
+        .note-area { display: flex; flex-direction: row; gap: 8px; flex: 1; }
+        .note-container { flex: 1; display: flex; align-items: stretch; }
         .note-box {
-          width: 100%; min-height: 34px; max-height: 150px; padding: 8px 12px;
-          border-radius: 6px; border: 1px solid #ddd; background: #fff; font-size: 13px;
-          line-height: 1.4; color: #333; box-sizing: border-box; resize: none; 
-          font-family: inherit; transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-          overflow-y: hidden; display: block;
+          width: 100%; min-height: 34px; max-height: 150px; padding: 8px 12px; border-radius: 6px;
+          border: 1px solid #ddd; background: #fff; font-size: 13px; line-height: 1.4; color: #333;
+          resize: none; font-family: inherit; transition: all 0.2s ease; overflow-y: hidden;
         }
-        .note-box.has-content {
-          border-color: #ff9800; background: #fff8e1; color: #e65100; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .note-box:focus {
-          outline: none; border-color: #4CAF50; background: #fff; color: #333; box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
-        }
+        .note-box.has-content { border-color: #ff9800; background: #fff8e1; color: #e65100; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .note-box:focus { outline: none; border-color: #4CAF50; background: #fff; box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2); }
         
-        .file-info {
-          position: fixed; bottom: 20px; right: 20px; background: rgba(255, 255, 255, 0.95);
-          padding: 8px 12px; border-radius: 6px; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-          z-index: 100; border: 1px solid #ddd; max-width: 300px;
-        }
-        
+        .file-info { position: fixed; bottom: 20px; right: 20px; background: rgba(255, 255, 255, 0.95); padding: 8px 12px; border-radius: 6px; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); z-index: 100; }
         .highlight { background: #ffff00; color: #d32f2f; font-weight: 700; padding: 0 2px; border-radius: 2px; }
-        .loading { text-align: center; padding: 40px; color: #666; font-size: 14px; }
         
-        .button-container {
-          position: fixed; bottom: 20px; right: 20px; display: flex; gap: 10px; z-index: 100;
-        }
+        /* === 浮動按鈕區塊 === */
+        .button-container { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 10px; z-index: 1000; align-items: flex-end; }
+        .import-btn { background: #28a745; color: white; border: none; padding: 10px 18px; border-radius: 20px; cursor: pointer; font-size: 14px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        .import-btn:hover { background: #218838; transform: translateY(-2px); }
+
+        .export-dropdown { position: relative; display: none; }
+        .main-export-btn { background: #2c3e50; color: white; border: none; padding: 10px 18px; border-radius: 20px; cursor: pointer; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        .main-export-btn:hover { background: #1a252f; transform: translateY(-2px); }
+        .dropdown-content { display: none; position: absolute; bottom: calc(100% + 10px); right: 0; background: #fff; min-width: 170px; box-shadow: 0 6px 16px rgba(0,0,0,0.15); border-radius: 10px; overflow: hidden; animation: slideUp 0.2s ease; border: 1px solid #eee; }
+        .dropdown-content.show { display: block; }
+        .dropdown-content button { color: #444; padding: 12px 16px; display: block; width: 100%; text-align: left; border: none; background: none; cursor: pointer; font-size: 14px; transition: background 0.2s; border-bottom: 1px solid #f0f0f0; }
+        .dropdown-content button:hover { background: #f8f9fa; color: #000; }
+        .dropdown-content button.pdf-btn { color: #e74c3c; font-weight: bold; }
+        .dropdown-content button.html-btn { color: #2980b9; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .export-btn, .import-btn {
-          color: white; border: none; padding: 10px 16px; border-radius: 20px; cursor: pointer;
-          font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: all 0.2s ease; min-width: 90px;
-        }
-        .export-btn { background: var(--accent); }
-        .export-btn:hover { background: #2a4a6a; transform: translateY(-1px); }
-        .import-btn { background: #28a745; }
-        .import-btn:hover { background: #218838; transform: translateY(-1px); }
-        .csv-btn { background: #27ae60; }
-        .csv-btn:hover { background: #219653; }
-        
-        .global-status {
-          position: fixed; top: calc(var(--header-height) + 10px); right: 18px;
-          background: rgba(255, 255, 255, 0.98); border-radius: 6px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-          padding: 6px 10px; font-size: 12px; color: #333; z-index: 1000; display: none;
-        }
+        .global-status { position: fixed; top: calc(var(--header-height) + 10px); right: 18px; background: rgba(255, 255, 255, 0.98); border-radius: 6px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12); padding: 6px 10px; font-size: 12px; color: #333; z-index: 1000; display: none; }
         .global-status.show { display: block; }
         
-        .progress-container {
-          position: fixed; top: var(--header-height); left: 0; right: 0;
-          height: 4px; background: #f0f0f0; z-index: 999; display: none;
-        }
-        .progress-bar {
-          height: 100%; background: var(--accent); width: 0%; transition: width 0.3s ease;
-        }
+        .progress-container { position: fixed; top: var(--header-height); left: 0; right: 0; height: 4px; background: #f0f0f0; z-index: 999; display: none; }
+        .progress-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s ease; }
         
+        /* === 查字典浮動視窗 === */
+        #dictPopup {
+          position: absolute; background: #2c3e50; color: white; padding: 6px 12px;
+          border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer;
+          z-index: 10001; box-shadow: 0 4px 12px rgba(0,0,0,0.25); display: none;
+          transition: transform 0.1s;
+        }
+        #dictPopup:hover { transform: scale(1.05); background: #1a252f; }
+
         @media (max-width: 900px) {
           :root { --header-height: 130px; }
           .header { flex-direction: column; align-items: flex-start; justify-content: center; padding: 12px 16px; }
           .header-left { width: 100%; margin-bottom: 6px; }
-          .header-left h1 { font-size: 18px; line-height: 1.2; }
-          .header-left p { font-size: 11px; line-height: 1.3; }
           .file-search-container { width: 100%; justify-content: flex-start; gap: 6px; }
-          .custom-file-upload { padding: 4px 10px; max-width: 130px; font-size: 12px; }
-          .search-box, .lang-select { flex: 1; min-width: 120px; width: auto; font-size: 12px; }
-          .bilingual-btn, .toggle-notes-btn { font-size: 11px; padding: 6px 10px; }
-          main { padding-top: calc(var(--header-height) + 16px); padding-bottom: 180px; }
           .subtitle { flex-direction: column; gap: 8px; padding: 8px 10px; }
-          .text-box { width: 100%; padding: 6px 10px; height: auto; min-height: 34px; font-size: 16px; }
-          .note-area, .note-container { width: 100%; flex: none; }
-          .note-box { height: 20px; max-height: 80px; overflow-y: auto !important; }
-          .button-container { bottom: 10px; right: 10px; left: 10px; justify-content: center; gap: 8px; }
+          .row-actions { top: auto; bottom: 8px; right: 8px; opacity: 1; }
         }
     </style>
 </head>
@@ -236,7 +173,7 @@
     <header class="header" role="banner">
         <div class="header-left">
             <h1>小野字幕君</h1>
-            <p>支援：.srt / .ass / .docx / .txt / .pdf / .epub</p>
+            <p>支援：.srt / .ass / .txt / .pdf / .epub</p>
         </div>
         <div class="file-search-container" role="region" aria-label="檔案與搜尋">
             <div class="file-buttons-wrapper">
@@ -257,371 +194,263 @@
                   <span class="clear-btn" id="clearBtn2" title="移除檔案2">×</span>
               </div>
             </div>
-
             <div class="action-group">
-                <select id="langMode" class="lang-select" title="雙檔案語系設定">
-                    <option value="auto">自動偵測語系</option>
-                    <option value="f1jp">檔1日文 / 檔2中文</option>
-                    <option value="f2jp">檔2日文 / 檔1中文</option>
-                </select>
                 <input id="searchBox" class="search-box" type="text" placeholder="搜尋關鍵字" />
                 <button id="toggleNotesBtn" class="toggle-notes-btn">隱藏筆記</button>
-                <button id="bilingualBtn" class="bilingual-btn">雙語顯示</button>
+                <button id="bilingualBtn" class="bilingual-btn">單語顯示</button>
             </div>
         </div>
     </header>
 
-    <div class="progress-container" id="progressContainer">
-        <div class="progress-bar" id="progressBar"></div>
-    </div>
-
+    <div class="progress-container" id="progressContainer"><div class="progress-bar" id="progressBar"></div></div>
     <div class="global-status" id="globalStatus"></div>
     <div class="file-info" id="fileInfo" style="display:none;"></div>
 
     <div class="button-container">
         <button class="import-btn" id="importBtn">導入筆記</button>
-        <button class="export-btn" id="exportBtn" style="display:none;">匯出 HTML</button>
-        <button class="export-btn csv-btn" id="exportCsvBtn" style="display:none;">匯出 CSV</button>
+        <div class="export-dropdown" id="exportDropdownContainer">
+            <button class="main-export-btn" id="mainExportBtn">匯出檔案 ▴</button>
+            <div class="dropdown-content" id="exportMenu">
+                <button class="html-btn" id="exportBtn" style="display:none;">📄 HTML (僅筆記)</button>
+                <button class="pdf-btn" id="exportPdfBtn">📕 PDF (全文講義)</button>
+            </div>
+        </div>
     </div>
 
     <input type="file" id="importFileInput" accept=".html" style="display:none" />
 
-    <main>
-        <div id="subtitles" aria-live="polite"></div>
-    </main>
+    <main><div id="subtitles" aria-live="polite"></div></main>
 
     <script>
-        // ==================== 改善點 4: 全域設定 PDF Worker，避免重複初始化 ====================
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-
         // ==================== 核心狀態 ====================
         let currentFileName = "";
-        let allSubtitles = []; 
         let processedSubtitles = []; 
         let notesData = {};
         let noteCount = 0;
         let bilingualEnabled = true; 
         let notesVisible = true; 
-        
         let file1Data = { name: "", subtitles: [] };
         let file2Data = { name: "", subtitles: [] };
         let renderAnimationId = null; 
         
+        let currentUtterance = null; // TTS 全局控制
+        
         // ==================== 工具函數 ====================
-        function escapeHtml(s) {
-          return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        }
-        
-        function escapeRegExp(str) {
-          return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        }
+        function escapeHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+        function escapeRegExp(str) { return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+        function getSafeFileName() { return currentFileName.replace(/\.[^/.]+$/, ""); }
+        function showLoading(msg = '加載中...') { document.getElementById('subtitles').innerHTML = `<div class="loading">${escapeHtml(msg)}</div>`; }
+        function showGlobalStatus(msg, duration = 2000) { const s = document.getElementById('globalStatus'); s.textContent = msg; s.classList.add('show'); setTimeout(() => s.classList.remove('show'), duration); }
+        function updateFileInfo(msg, duration = 3000) { const f = document.getElementById('fileInfo'); f.textContent = msg; f.style.display = 'block'; if (duration > 0) setTimeout(() => f.style.display = 'none', duration); }
+        function updateProgress(p) { const c = document.getElementById('progressContainer'), b = document.getElementById('progressBar'); c.style.display = 'block'; b.style.width = p + '%'; if (p >= 100) setTimeout(() => c.style.display = 'none', 500); }
 
-        // 改善點 1: 通用防抖函數
-        function debounce(fn, delay) {
-          let timer;
-          return function(...args) {
-            clearTimeout(timer);
-            timer = setTimeout(() => fn.apply(this, args), delay);
-          };
-        }
-        
-        function showError(msg) {
-          const c = document.getElementById('subtitles');
-          c.innerHTML = `<div class="loading" style="color:#d32f2f;">${escapeHtml(msg)}</div>`;
-        }
-        
-        function showLoading(msg = '加載中...') {
-          const c = document.getElementById('subtitles');
-          c.innerHTML = `<div class="loading">${escapeHtml(msg)}</div>`;
-        }
-        
-        function updateFileInfo(msg, duration = 3000) {
-          const fileInfo = document.getElementById('fileInfo');
-          fileInfo.textContent = msg;
-          fileInfo.style.display = 'block';
-          if (duration > 0) setTimeout(() => { fileInfo.style.display = 'none'; }, duration);
-        }
-        
-        function showGlobalStatus(msg, duration = 2000) {
-          const status = document.getElementById('globalStatus');
-          status.textContent = msg;
-          status.classList.add('show');
-          setTimeout(() => { status.classList.remove('show'); }, duration);
-        }
-        
-        function updateProgress(percent, msg = '') {
-          const container = document.getElementById('progressContainer');
-          const bar = document.getElementById('progressBar');
-          container.style.display = 'block';
-          bar.style.width = percent + '%';
-          if (msg) updateFileInfo(msg);
-          if (percent >= 100) setTimeout(() => { container.style.display = 'none'; }, 500);
-        }
-        
         function updateNoteCount() {
           noteCount = Object.keys(notesData).length;
-          document.getElementById('exportBtn').style.display = noteCount > 0 ? 'block' : 'none';
-          document.getElementById('exportCsvBtn').style.display = processedSubtitles.length > 0 ? 'block' : 'none';
-          if (noteCount > 0) showGlobalStatus(`已有 ${noteCount} 條筆記`);
+          const exportContainer = document.getElementById('exportDropdownContainer');
+          const htmlBtn = document.getElementById('exportBtn');
+          const pdfBtn = document.getElementById('exportPdfBtn');
+          
+          if (processedSubtitles.length > 0) { exportContainer.style.display = 'block'; pdfBtn.style.display = 'block'; } 
+          else { exportContainer.style.display = 'none'; }
+
+          if (noteCount > 0) { htmlBtn.style.display = 'block'; showGlobalStatus(`目前共有 ${noteCount} 條筆記`); } 
+          else { htmlBtn.style.display = 'none'; }
         }
         
         function autoResizeTextarea(textarea) {
           if (!notesVisible) return;
-          const subtitleRow = textarea.closest('.subtitle');
-          if (!subtitleRow) return;
-          
+          const subtitleRow = textarea.closest('.subtitle'); if (!subtitleRow) return;
           const textBox = subtitleRow.querySelector('.text-box');
-          textarea.style.height = 'auto';
-          if (textBox) textBox.style.height = 'auto';
-          
-          const textHeight = textBox ? textBox.scrollHeight : 0;
-          const noteHeight = textarea.scrollHeight;
+          textarea.style.height = 'auto'; if (textBox) textBox.style.height = 'auto';
+          const textHeight = textBox ? textBox.scrollHeight : 0; const noteHeight = textarea.scrollHeight;
           let finalHeight = Math.max(textHeight, noteHeight, 34);
-          
-          if (window.innerWidth > 900 && finalHeight >= 150) {
-            textarea.style.overflowY = 'auto';
-            finalHeight = 150;
-          } else if (window.innerWidth <= 900) {
-            textarea.style.overflowY = 'auto';
-            finalHeight = Math.max(textHeight, 34);
-          } else {
-            textarea.style.overflowY = 'hidden';
-          }
-          
-          if (window.innerWidth > 900) {
-            textarea.style.height = finalHeight + 'px';
-            if (textBox) textBox.style.height = finalHeight + 'px';
-          }
-        }
-        
-        function isJapaneseText(text) {
-          if (!text) return false;
-          return /[\u3040-\u309F\u30A0-\u30FF]/.test(text);
-        }
-        
-        function isChineseText(text) {
-          if (!text) return false;
-          return /[\u4E00-\u9FAF]/.test(text) && !/[\u3040-\u309F\u30A0-\u30FF]/.test(text);
+          if (window.innerWidth > 900 && finalHeight >= 150) { textarea.style.overflowY = 'auto'; finalHeight = 150; } 
+          else if (window.innerWidth <= 900) { textarea.style.overflowY = 'auto'; finalHeight = Math.max(textHeight, 34); } 
+          else { textarea.style.overflowY = 'hidden'; }
+          if (window.innerWidth > 900) { textarea.style.height = finalHeight + 'px'; if (textBox) textBox.style.height = finalHeight + 'px'; }
         }
 
-        // 改善點 3: 時間轉換函數，用於容錯對齊
-        function timeToSeconds(timeStr) {
-            if (!timeStr) return 0;
-            // 匹配 HH:MM:SS,MMM 或 HH:MM:SS.MMM
-            const match = timeStr.match(/(\d{2}):(\d{2}):(\d{2})[,.](\d+)/);
-            if (!match) return 0;
-            return parseInt(match[1]) * 3600 + parseInt(match[2]) * 60 + parseInt(match[3]) + parseFloat("0." + match[4]);
+        // ==================== 🔊 語音朗讀 TTS ====================
+        window.speakText = function(btn) {
+           const text = btn.getAttribute('data-text');
+           if (!text) return;
+           if ('speechSynthesis' in window) {
+             window.speechSynthesis.cancel(); 
+             currentUtterance = new SpeechSynthesisUtterance(text);
+             currentUtterance.lang = 'ja-JP';
+             currentUtterance.rate = 0.9; // 稍慢語速適合學習
+             window.speechSynthesis.speak(currentUtterance);
+           } else {
+             alert('您的瀏覽器不支援語音朗讀功能');
+           }
         }
-        
-        // ==================== 核心：處理與合併輸入數據 ====================
-        function processAndDisplayData() {
-          notesData = {};
+
+        // ==================== 🔗 智慧合併與刪除行 ====================
+        window.mergeRowWithNext = function(index) {
+          if (index >= processedSubtitles.length - 1) return;
+          const current = processedSubtitles[index];
+          const next = processedSubtitles[index + 1];
           
-          if (file1Data.subtitles.length > 0 && file2Data.subtitles.length > 0) {
-            showLoading("偵測到雙檔案，正在自動對齊合併...");
-            setTimeout(() => {
-              let jpSubs = [];
-              let zhSubs = [];
-              const langMode = document.getElementById('langMode').value;
+          current.japanese = (current.japanese + '\n' + next.japanese).trim();
+          if(current.chinese || next.chinese) current.chinese = ((current.chinese||'') + '\n' + (next.chinese||'')).trim();
+          if (next.endTime) current.endTime = next.endTime;
+          
+          let curNote = notesData[index] || '';
+          let nextNote = notesData[index + 1] || '';
+          let mergedNote = (curNote + (curNote && nextNote ? '\n' : '') + nextNote).trim();
+          
+          processedSubtitles.splice(index + 1, 1);
+          
+          let newNotes = {};
+          for(let key in notesData) {
+             let k = parseInt(key);
+             if(k < index) newNotes[k] = notesData[k];
+             else if(k > index + 1) newNotes[k - 1] = notesData[k];
+          }
+          if (mergedNote) newNotes[index] = mergedNote;
+          notesData = newNotes;
+          
+          updateDisplay(document.getElementById('searchBox').value.trim());
+          updateNoteCount();
+          showGlobalStatus('✅ 已成功合併到下一行');
+        }
+
+        // ==================== ✂️ 拆分單行功能 ====================
+        window.splitRow = function(index) {
+          const current = processedSubtitles[index];
+          const splitText = prompt("請輸入你要拆分到「下一行」的日文段落：\n\n目前整句為：\n" + current.japanese);
+          
+          if (splitText && current.japanese.includes(splitText)) {
+              const part1 = current.japanese.replace(splitText, '').trim();
+              const part2 = splitText.trim();
               
-              // 改善點 2: 手動指定語系邏輯
-              if (langMode === 'f1jp') {
-                  jpSubs = file1Data.subtitles;
-                  zhSubs = file2Data.subtitles;
-              } else if (langMode === 'f2jp') {
-                  jpSubs = file2Data.subtitles;
-                  zhSubs = file1Data.subtitles;
-              } else {
-                  // Auto detect
-                  let f1KanaCount = 0; let f2KanaCount = 0;
-                  const sample1 = Math.min(20, file1Data.subtitles.length);
-                  const sample2 = Math.min(20, file2Data.subtitles.length);
-                  for(let i=0; i<sample1; i++) { if (isJapaneseText(file1Data.subtitles[i].text)) f1KanaCount++; }
-                  for(let i=0; i<sample2; i++) { if (isJapaneseText(file2Data.subtitles[i].text)) f2KanaCount++; }
-
-                  if (f2KanaCount > f1KanaCount) {
-                    jpSubs = file2Data.subtitles; zhSubs = file1Data.subtitles;
-                  } else {
-                    jpSubs = file1Data.subtitles; zhSubs = file2Data.subtitles;
-                  }
+              current.japanese = part1;
+              
+              const newRow = {
+                  japanese: part2,
+                  chinese: '', // 拆分後中文難以自動切，先留空
+                  startTime: current.startTime,
+                  endTime: current.endTime,
+                  isBilingual: false,
+                  originalText: part2
+              };
+              
+              processedSubtitles.splice(index + 1, 0, newRow);
+              
+              // 筆記往下挪移
+              let newNotes = {};
+              for(let key in notesData) {
+                  let k = parseInt(key);
+                  if(k <= index) newNotes[k] = notesData[k];
+                  else newNotes[k + 1] = notesData[k];
               }
-
-              const merged = mergeSubtitlesArrays(jpSubs, zhSubs);
-              currentFileName = `${file1Data.name} + ${file2Data.name}`;
-              processedSubtitles = merged;
-              allSubtitles = merged;
+              notesData = newNotes;
+              
+              updateDisplay(document.getElementById('searchBox').value.trim());
               updateNoteCount();
-              updateDisplay(); 
-            }, 100);
-          } else if (file1Data.subtitles.length > 0) {
-            currentFileName = file1Data.name;
-            processedSubtitles = processSingleFileSubtitles(file1Data.subtitles);
-            allSubtitles = processedSubtitles;
-            updateNoteCount();
-            updateDisplay();
-          } else if (file2Data.subtitles.length > 0) {
-            currentFileName = file2Data.name;
-            processedSubtitles = processSingleFileSubtitles(file2Data.subtitles);
-            allSubtitles = processedSubtitles;
-            updateNoteCount();
-            updateDisplay();
+              showGlobalStatus('✅ 拆分成功');
+          } else if (splitText) {
+              alert('找不到您輸入的段落，請確保輸入的內容完全符合原文中的字句。');
           }
         }
 
-        function processSingleFileSubtitles(subtitles) {
-          const processed = [];
-          const hasTimecode = subtitles.length > 0 && subtitles[0].startTime;
-
-          if (hasTimecode) {
-            const timecodeMap = new Map();
-            subtitles.forEach(sub => {
-              if (!sub.startTime) return;
-              const timeKey = sub.startTime.split(/[,.]/)[0]; 
-              if (!timecodeMap.has(timeKey)) {
-                timecodeMap.set(timeKey, { jpTexts: [], zhTexts: [], rawTexts: [], startTime: sub.startTime, endTime: sub.endTime });
-              }
-              const group = timecodeMap.get(timeKey);
-              
-              const lines = sub.text.split('\n').map(t => t.trim()).filter(t => t);
-              lines.forEach(line => {
-                if (isJapaneseText(line)) group.jpTexts.push(line);
-                else if (isChineseText(line)) group.zhTexts.push(line);
-                else group.rawTexts.push(line);
-              });
-            });
-
-            const sorted = Array.from(timecodeMap.values()).sort((a, b) => a.startTime.localeCompare(b.startTime));
-            sorted.forEach(group => {
-              let jp = group.jpTexts.join('\n');
-              let zh = group.zhTexts.join('\n');
-              
-              if (!jp && !zh) {
-                jp = group.rawTexts.join('\n');
-              } else if (jp && !zh && group.rawTexts.length) {
-                zh = group.rawTexts.join('\n');
-              } else if (!jp && zh && group.rawTexts.length) {
-                jp = group.rawTexts.join('\n');
-              }
-
-              if (jp && !zh && (jp.includes('|') || jp.includes('/') || jp.includes('\\'))) {
-                const parts = jp.split(/[|/\\]/).map(p => p.trim());
-                jp = parts[0]; zh = parts[1] || '';
-              }
-
-              processed.push({
-                japanese: jp, chinese: zh, originalText: jp + (zh ? ' | ' + zh : ''),
-                isBilingual: !!(jp && zh), startTime: group.startTime, endTime: group.endTime
-              });
-            });
-          } else {
-            let i = 0;
-            while (i < subtitles.length) {
-              const currentText = subtitles[i].text;
-              const nextText = (i + 1 < subtitles.length) ? subtitles[i+1].text : "";
-              
-              if (currentText.includes('|') || currentText.includes('/') || currentText.includes('\\')) {
-                const parts = currentText.split(/[|/\\]/).map(p => p.trim());
-                processed.push({
-                  japanese: parts[0], chinese: parts[1] || '', originalText: currentText,
-                  isBilingual: parts.length >= 2, startTime: '', endTime: ''
-                });
-                i++; continue;
-              }
-
-              const isCurrentJP = isJapaneseText(currentText);
-              const isCurrentZH = isChineseText(currentText);
-              const isNextJP = isJapaneseText(nextText);
-              const isNextZH = isChineseText(nextText);
-
-              if (isCurrentJP && isNextZH) {
-                processed.push({
-                  japanese: currentText, chinese: nextText, originalText: currentText + ' | ' + nextText,
-                  isBilingual: true, startTime: '', endTime: ''
-                });
-                i += 2;
-              } else if (isCurrentZH && isNextJP) {
-                processed.push({
-                  japanese: nextText, chinese: currentText, originalText: nextText + ' | ' + currentText,
-                  isBilingual: true, startTime: '', endTime: ''
-                });
-                i += 2;
-              } else {
-                processed.push({
-                  japanese: isCurrentJP ? currentText : (isCurrentZH ? '' : currentText),
-                  chinese: isCurrentZH ? currentText : '', originalText: currentText,
-                  isBilingual: false, startTime: '', endTime: ''
-                });
-                i++;
-              }
-            }
+        window.deleteRow = function(index) {
+          if(confirm('確定要刪除這行字幕嗎？')) {
+             processedSubtitles.splice(index, 1);
+             let newNotes = {};
+             for(let key in notesData) {
+                let k = parseInt(key);
+                if(k < index) newNotes[k] = notesData[k];
+                else if(k > index) newNotes[k - 1] = notesData[k];
+             }
+             notesData = newNotes;
+             updateDisplay(document.getElementById('searchBox').value.trim());
+             updateNoteCount();
           }
-          return processed;
         }
 
-        // 改善點 3: 引入 1.5 秒的容錯匹配，取代嚴格字串匹配
-        function mergeSubtitlesArrays(japaneseSubtitles, chineseSubtitles) {
+        // ==================== 🧠 智慧模糊對齊演算法 ====================
+        function timecodeToSeconds(timeStr) {
+          if (!timeStr) return 0;
+          const parts = timeStr.replace(',', '.').trim().split(':');
+          if (parts.length < 3) return 0;
+          return parseFloat(parts[0]) * 3600 + parseFloat(parts[1]) * 60 + parseFloat(parts[2]);
+        }
+
+        function advancedFuzzyMerge(jpSubs, zhSubs) {
           const merged = [];
-          const hasTimecode = (japaneseSubtitles.length > 0 && japaneseSubtitles[0].startTime) || 
-                              (chineseSubtitles.length > 0 && chineseSubtitles[0].startTime);
+          const maxTimeThreshold = 3.5; // 最大容許時間誤差
 
-          if (hasTimecode) {
-             const jpList = japaneseSubtitles.map(s => ({...s, sec: timeToSeconds(s.startTime), matched: false}));
-             const zhList = chineseSubtitles.map(s => ({...s, sec: timeToSeconds(s.startTime), matched: false}));
-             const TOLERANCE_SECONDS = 1.5;
+          jpSubs.forEach((jp) => {
+            if (!jp.startTime) return; 
+            const jpStart = timecodeToSeconds(jp.startTime);
+            let bestMatchZh = null;
+            let minTimeDiff = Infinity;
+            let matchIndex = -1;
 
-             zhList.forEach(zh => {
-                 if (!zh.startTime) return;
-                 let closestJp = null;
-                 let minDiff = TOLERANCE_SECONDS;
-                 
-                 // 尋找時間最接近的日文字幕
-                 jpList.forEach(jp => {
-                     if (!jp.startTime || jp.matched) return;
-                     const diff = Math.abs(zh.sec - jp.sec);
-                     if (diff < minDiff) {
-                         minDiff = diff;
-                         closestJp = jp;
-                     }
-                 });
+            zhSubs.forEach((zh, idx) => {
+              if(!zh.startTime) return;
+              const zhStart = timecodeToSeconds(zh.startTime);
+              const diff = Math.abs(jpStart - zhStart);
+              if (diff < minTimeDiff && diff <= maxTimeThreshold) {
+                minTimeDiff = diff;
+                bestMatchZh = zh;
+                matchIndex = idx;
+              }
+            });
 
-                 if (closestJp) {
-                     closestJp.matched = true;
-                     merged.push({
-                         japanese: closestJp.text, chinese: zh.text,
-                         originalText: closestJp.text || zh.text, isBilingual: true,
-                         startTime: closestJp.startTime, endTime: closestJp.endTime, sec: closestJp.sec
-                     });
-                 } else {
-                     merged.push({
-                         japanese: '', chinese: zh.text, originalText: zh.text, isBilingual: false,
-                         startTime: zh.startTime, endTime: zh.endTime, sec: zh.sec
-                     });
-                 }
-             });
-
-             jpList.forEach(jp => {
-                 if (!jp.matched) {
-                     merged.push({
-                         japanese: jp.text, chinese: '', originalText: jp.text, isBilingual: false,
-                         startTime: jp.startTime, endTime: jp.endTime, sec: jp.sec
-                     });
-                 }
-             });
-
-             merged.sort((a, b) => a.sec - b.sec);
-          } else {
-            const maxLength = Math.max(japaneseSubtitles.length, chineseSubtitles.length);
-            for (let i = 0; i < maxLength; i++) {
-              const jp = japaneseSubtitles[i] || { text: '' };
-              const zh = chineseSubtitles[i] || { text: '' };
-              merged.push({
-                japanese: jp.text || '', chinese: zh.text || '',
-                originalText: jp.text || zh.text || '', isBilingual: !!(jp.text && zh.text),
-                startTime: '', endTime: ''
-              });
+            if (bestMatchZh) {
+              merged.push({ japanese: jp.text, chinese: bestMatchZh.text, originalText: jp.text + ' | ' + bestMatchZh.text, startTime: jp.startTime, endTime: jp.endTime, isBilingual: true });
+              zhSubs[matchIndex] = {}; // 避免重複配對
+            } else {
+              merged.push({ japanese: jp.text, chinese: '', originalText: jp.text, startTime: jp.startTime, endTime: jp.endTime, isBilingual: false });
             }
+          });
+          
+          if(merged.length === 0 && jpSubs.length > 0) {
+             const maxLength = Math.max(jpSubs.length, zhSubs.length);
+             for (let i = 0; i < maxLength; i++) {
+               const jp = jpSubs[i] || { text: '' };
+               const zh = zhSubs[i] || { text: '' };
+               merged.push({ japanese: jp.text || '', chinese: zh.text || '', originalText: jp.text || zh.text || '', isBilingual: !!(jp.text && zh.text), startTime: '', endTime: '' });
+             }
           }
           return merged;
+        }
+
+        function isJapaneseText(text) { return /[\u3040-\u309F\u30A0-\u30FF]/.test(text); }
+        
+        function processAndDisplayData() {
+          notesData = {};
+          if (file1Data.subtitles.length > 0 && file2Data.subtitles.length > 0) {
+            showLoading("偵測到雙檔案，正在啟動智慧對齊合併...");
+            setTimeout(() => {
+              let jpSubs = file1Data.subtitles; let zhSubs = file2Data.subtitles;
+              let f1KanaCount = 0; let f2KanaCount = 0;
+              const sample1 = Math.min(20, file1Data.subtitles.length); const sample2 = Math.min(20, file2Data.subtitles.length);
+              for(let i=0; i<sample1; i++) { if (isJapaneseText(file1Data.subtitles[i].text)) f1KanaCount++; }
+              for(let i=0; i<sample2; i++) { if (isJapaneseText(file2Data.subtitles[i].text)) f2KanaCount++; }
+
+              if (f2KanaCount > f1KanaCount) { jpSubs = file2Data.subtitles; zhSubs = file1Data.subtitles; } 
+              else { jpSubs = file1Data.subtitles; zhSubs = file2Data.subtitles; }
+
+              processedSubtitles = advancedFuzzyMerge(jpSubs, zhSubs);
+              currentFileName = `${file1Data.name} + ${file2Data.name}`;
+              updateNoteCount(); updateDisplay(); 
+            }, 100);
+          } else if (file1Data.subtitles.length > 0 || file2Data.subtitles.length > 0) {
+            const activeData = file1Data.subtitles.length > 0 ? file1Data : file2Data;
+            currentFileName = activeData.name;
+            processedSubtitles = advancedFuzzyMerge(activeData.subtitles, []); 
+            
+            processedSubtitles.forEach(item => {
+               if(!item.chinese && (item.japanese.includes('|') || item.japanese.includes('/'))) {
+                  const parts = item.japanese.split(/[|/]/).map(p => p.trim());
+                  item.japanese = parts[0]; item.chinese = parts[1] || '';
+               }
+            });
+            updateNoteCount(); updateDisplay();
+          }
         }
 
         // ==================== 檔案解析模組 ====================
@@ -630,130 +459,27 @@
           return content.replace(/\r/g, '').split(/\n\n+/).map(block => {
             const lines = block.split('\n').filter(l => l.trim() !== '');
             if (lines.length >= 3) {
-              const timecode = lines[1];
-              const match = timecode.match(/(\d{2}:\d{2}:\d{2},\d{3})\s*-->\s*(\d{2}:\d{2}:\d{2},\d{3})/);
+              const match = lines[1].match(/(\d{2}:\d{2}:\d{2},\d{3})\s*-->\s*(\d{2}:\d{2}:\d{2},\d{3})/);
               return { startTime: match ? match[1] : '', endTime: match ? match[2] : '', text: lines.slice(2).join('\n') };
             }
             return null;
           }).filter(Boolean);
         }
-        
         function parseASS(content) {
           if (!content) return [];
-          return content.replace(/\r/g, '').split('\n').filter(l => l.trim().startsWith('Dialogue:'))
-            .map(line => {
+          return content.replace(/\r/g, '').split('\n').filter(l => l.trim().startsWith('Dialogue:')).map(line => {
               const parts = line.split(',');
-              if (parts.length >= 10) {
-                return { startTime: parts[1], endTime: parts[2], text: parts.slice(9).join(',').replace(/\\N/g, '\n').replace(/\{.*?\}/g, '').trim() };
-              }
+              if (parts.length >= 10) return { startTime: parts[1], endTime: parts[2], text: parts.slice(9).join(',').replace(/\\N/g, '\n').replace(/\{.*?\}/g, '').trim() };
               return null;
             }).filter(item => item && item.text);
         }
-        
         function parseTXT(content) {
-          if (!content) return [];
-          return content.split('\n').map(l => l.trim()).filter(l => l !== '').map(l => ({ text: l }));
-        }
-        
-        function parseDOCX(arrayBuffer, callback) {
-          mammoth.convertToHtml({ arrayBuffer }).then(result => {
-            const temp = document.createElement('div');
-            temp.innerHTML = result.value || '';
-            const ps = Array.from(temp.querySelectorAll('p')).map(p => p.textContent.trim()).filter(t => t !== '');
-            callback(ps.map(t => ({ text: t })));
-          }).catch(err => { alert('DOCX 解析失敗'); });
-        }
-        
-        function parsePDF(arrayBuffer, callback) {
-          pdfjsLib.getDocument({ data: arrayBuffer }).promise.then(pdf => {
-            const promises = [];
-            for (let i = 1; i <= pdf.numPages; i++) {
-              promises.push(pdf.getPage(i).then(page => page.getTextContent().then(content => {
-                let lines = [], current = [], lastY = null;
-                content.items.forEach(item => {
-                  const y = (item.transform && item.transform[5] != null) ? item.transform[5] : null;
-                  if (lastY === null || y === null || Math.abs(y - lastY) < 5) {
-                    current.push(item.str);
-                  } else {
-                    if (current.length) lines.push(current.join(' '));
-                    current = [item.str];
-                  }
-                  lastY = y;
-                });
-                if (current.length) lines.push(current.join(' '));
-                return lines;
-              })));
-            }
-            Promise.all(promises).then(pages => {
-              const lines = pages.flat().map(l => l.trim()).filter(l => l !== '');
-              callback(lines.map(l => ({ text: l })));
-            });
-          });
+          return content ? content.split('\n').map(l => l.trim()).filter(l => l !== '').map(l => ({ text: l })) : [];
         }
 
-        function parseEPUB(file, callback) {
-            JSZip.loadAsync(file).then(zip => {
-                return zip.file("META-INF/container.xml").async("string").then(containerXml => {
-                    const parser = new DOMParser();
-                    const containerDoc = parser.parseFromString(containerXml, "text/xml");
-                    const rootfile = containerDoc.getElementsByTagName("rootfile")[0];
-                    if (!rootfile) throw new Error("無效的 EPUB 格式");
-                    
-                    const opfPath = rootfile.getAttribute("full-path");
-                    const basePath = opfPath.indexOf('/') !== -1 ? opfPath.substring(0, opfPath.lastIndexOf('/') + 1) : '';
-
-                    return zip.file(opfPath).async("string").then(opfXml => {
-                        const opfDoc = parser.parseFromString(opfXml, "text/xml");
-                        const manifestItems = opfDoc.getElementsByTagName("item");
-                        const manifest = {};
-                        for (let i = 0; i < manifestItems.length; i++) {
-                            manifest[manifestItems[i].getAttribute("id")] = manifestItems[i].getAttribute("href");
-                        }
-
-                        const spineItems = opfDoc.getElementsByTagName("itemref");
-                        const promises = [];
-                        for (let i = 0; i < spineItems.length; i++) {
-                            const idref = spineItems[i].getAttribute("idref");
-                            let href = manifest[idref];
-                            if (href) {
-                                href = href.split('#')[0]; 
-                                const fullPath = basePath + href;
-                                const fileInZip = zip.file(fullPath) || zip.file(decodeURIComponent(fullPath));
-                                
-                                if (fileInZip) {
-                                    promises.push(fileInZip.async("string").then(html => {
-                                        const doc = parser.parseFromString(html, "text/html");
-                                        doc.querySelectorAll('script, style, svg, img').forEach(s => s.remove());
-                                        const blocks = ['p', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li', 'br'];
-                                        blocks.forEach(tag => {
-                                            doc.querySelectorAll(tag).forEach(el => {
-                                                el.insertAdjacentText('beforebegin', '\n');
-                                                el.insertAdjacentText('afterend', '\n');
-                                            });
-                                        });
-                                        const text = doc.body ? doc.body.textContent : doc.textContent;
-                                        return text.split('\n').map(t => t.trim()).filter(t => t !== '');
-                                    }));
-                                }
-                            }
-                        }
-                        return Promise.all(promises);
-                    });
-                });
-            }).then(pages => {
-                const lines = pages.flat().filter(l => l !== '');
-                callback(lines.map(l => ({ text: l })));
-            }).catch(err => {
-                console.error(err);
-                showError('EPUB 解析失敗，請確認檔案是否損壞或帶有加密保護（DRM）');
-            });
-        }
-        
-        // ==================== 清除檔案與讀取檔案邏輯 ====================
         function clearFile(fileNumber) {
             if (fileNumber === 1) file1Data = { name: "", subtitles: [] };
             if (fileNumber === 2) file2Data = { name: "", subtitles: [] };
-            
             document.getElementById(`fileInput${fileNumber}`).value = '';
             document.getElementById(`textFile${fileNumber}`).textContent = `選擇檔案 ${fileNumber}`;
             document.getElementById(`labelFile${fileNumber}`).classList.remove('has-file');
@@ -761,63 +487,40 @@
 
             if (file1Data.subtitles.length === 0 && file2Data.subtitles.length === 0) {
                 document.getElementById('subtitles').innerHTML = '';
-                processedSubtitles = []; allSubtitles = []; currentFileName = "";
-                updateNoteCount();
-                showGlobalStatus('已清空所有檔案', 2000);
+                processedSubtitles = []; notesData = {};
+                updateNoteCount(); showGlobalStatus('已清空所有檔案');
             } else {
-                processAndDisplayData();
-                showGlobalStatus(`已移除檔案 ${fileNumber}，恢復單一檔案顯示`, 2000);
+                processAndDisplayData(); showGlobalStatus(`已恢復單一檔案顯示`);
             }
         }
-
         document.getElementById('clearBtn1').addEventListener('click', () => clearFile(1));
         document.getElementById('clearBtn2').addEventListener('click', () => clearFile(2));
-        document.getElementById('langMode').addEventListener('change', () => {
-            if (file1Data.subtitles.length > 0 || file2Data.subtitles.length > 0) {
-                processAndDisplayData();
-            }
-        });
 
         function handleFileChoose(file, targetDataStore, fileNumber) {
-          const labelId = 'labelFile' + fileNumber;
-          const textId = 'textFile' + fileNumber;
-          const label = document.getElementById(labelId);
-          const textSpan = document.getElementById(textId);
-          
-          if (!file) { clearFile(fileNumber); return; }
-
-          textSpan.textContent = file.name;
-          label.classList.add('has-file');
+          const labelId = 'labelFile' + fileNumber; const textId = 'textFile' + fileNumber;
+          if (!file) return clearFile(fileNumber);
+          document.getElementById(textId).textContent = file.name;
+          document.getElementById(labelId).classList.add('has-file');
           document.getElementById('clearBtn' + fileNumber).style.display = 'block';
 
           const ext = (file.name.split('.').pop() || '').toLowerCase();
           showLoading(`正在解析 ${file.name}...`);
           targetDataStore.name = file.name;
-
-          if (ext === 'epub') {
-              parseEPUB(file, subs => { targetDataStore.subtitles = subs; processAndDisplayData(); });
-              return;
-          }
           
           const reader = new FileReader();
           reader.onload = (ev) => {
-            if (ext === 'srt') { targetDataStore.subtitles = parseSRT(ev.target.result); processAndDisplayData(); }
-            else if (ext === 'ass') { targetDataStore.subtitles = parseASS(ev.target.result); processAndDisplayData(); }
-            else if (ext === 'txt') { targetDataStore.subtitles = parseTXT(ev.target.result); processAndDisplayData(); }
-            else if (ext === 'docx') { parseDOCX(ev.target.result, subs => { targetDataStore.subtitles = subs; processAndDisplayData(); }); }
-            else if (ext === 'pdf') { parsePDF(ev.target.result, subs => { targetDataStore.subtitles = subs; processAndDisplayData(); }); }
-            else { showError('不支援的檔案格式'); }
+            if (ext === 'srt') { targetDataStore.subtitles = parseSRT(ev.target.result); processAndDisplayData(); } 
+            else if (ext === 'ass') { targetDataStore.subtitles = parseASS(ev.target.result); processAndDisplayData(); } 
+            else if (ext === 'txt') { targetDataStore.subtitles = parseTXT(ev.target.result); processAndDisplayData(); } 
+            else { alert('為保持高效，已移除繁重庫，目前支援 SRT, ASS, TXT 檔案格式。'); clearFile(fileNumber); }
           };
-          
-          if (ext === 'docx' || ext === 'pdf') reader.readAsArrayBuffer(file);
-          else reader.readAsText(file, 'utf-8');
+          reader.readAsText(file, 'utf-8');
         }
 
-        document.getElementById('fileInput1').addEventListener('change', e => handleFileChoose(e.target.files[0], file1Data, 1));
-        document.getElementById('fileInput2').addEventListener('change', e => handleFileChoose(e.target.files[0], file2Data, 2));
+        document.getElementById('fileInput1').addEventListener('change', function(e) { handleFileChoose(e.target.files[0], file1Data, 1); });
+        document.getElementById('fileInput2').addEventListener('change', function(e) { handleFileChoose(e.target.files[0], file2Data, 2); });
         
-        // ==================== 【資料驅動搜尋 與 UI 分批渲染】 ====================
-        
+        // ==================== 渲染與畫面 ====================
         function createSubtitleRowHTML(item) {
           const { sub, originalIndex, isContext, highlightJp, highlightZh } = item;
           const noteContent = notesData[originalIndex] || '';
@@ -825,19 +528,23 @@
           const hasContentClass = noteContent ? 'has-content' : '';
           const opacityStyle = isContext ? 'style="opacity: 0.5;"' : '';
           
-          let japaneseHTML = `<div class="japanese-text">${highlightJp}</div>`;
-          let chineseHTML = sub.chinese ? `<div class="chinese-text">${highlightZh}</div>` : '';
-          
-          // 改善點 5: 加入 aria-label 增強無障礙支援
           return `<div class="row" data-index="${originalIndex}" ${opacityStyle}>
               <div class="subtitle ${hasWrittenClass}">
                 <div class="text-box">
-                  ${japaneseHTML} ${chineseHTML}
+                  <div class="japanese-text">${highlightJp}</div>
+                  ${sub.chinese ? `<div class="chinese-text">${highlightZh}</div>` : ''}
                 </div>
                 <div class="note-area">
                   <div class="note-container">
-                    <textarea aria-label="第 ${originalIndex + 1} 行的筆記" class="note-box ${hasContentClass}" data-index="${originalIndex}" placeholder="輸入筆記...">${escapeHtml(noteContent)}</textarea>
+                    <textarea class="note-box ${hasContentClass}" data-index="${originalIndex}" placeholder="輸入筆記...">${escapeHtml(noteContent)}</textarea>
                   </div>
+                </div>
+                
+                <div class="row-actions">
+                   <button class="action-btn" title="朗讀" data-text="${escapeHtml(sub.japanese)}" onclick="speakText(this)">🔊</button>
+                   <button class="action-btn" title="向下合併" onclick="mergeRowWithNext(${originalIndex})">🔗</button>
+                   <button class="action-btn" title="拆分此行" onclick="splitRow(${originalIndex})">✂️</button>
+                   <button class="action-btn" title="刪除此行" onclick="deleteRow(${originalIndex})">❌</button>
                 </div>
               </div>
             </div>`;
@@ -845,17 +552,11 @@
         
         function updateDisplay(query = '') {
             let displayData = [];
-            
             if (!query) {
-                displayData = processedSubtitles.map((sub, i) => ({
-                    sub, originalIndex: i, isContext: false,
-                    highlightJp: escapeHtml(sub.japanese || ''), highlightZh: escapeHtml(sub.chinese || '')
-                }));
+                displayData = processedSubtitles.map((sub, i) => ({ sub, originalIndex: i, isContext: false, highlightJp: escapeHtml(sub.japanese || ''), highlightZh: escapeHtml(sub.chinese || '') }));
             } else {
                 const regex = new RegExp('(' + escapeRegExp(query) + ')', 'gi');
-                let matchIndices = new Set();
-                let displayIndices = new Set();
-
+                let matchIndices = new Set(); let displayIndices = new Set();
                 processedSubtitles.forEach((sub, idx) => {
                     const searchStr = (sub.japanese || '') + ' ' + (sub.chinese || '');
                     if (searchStr.match(regex)) {
@@ -864,23 +565,12 @@
                         if (idx < processedSubtitles.length - 1) displayIndices.add(idx + 1);
                     }
                 });
-
                 Array.from(displayIndices).sort((a,b) => a - b).forEach(idx => {
-                    const sub = processedSubtitles[idx];
-                    const isMatch = matchIndices.has(idx);
-                    let highlightJp = escapeHtml(sub.japanese || '');
-                    let highlightZh = escapeHtml(sub.chinese || '');
-
-                    if (isMatch) {
-                        highlightJp = highlightJp.replace(regex, '<span class="highlight">$1</span>');
-                        highlightZh = highlightZh.replace(regex, '<span class="highlight">$1</span>');
-                    }
-
+                    const sub = processedSubtitles[idx]; const isMatch = matchIndices.has(idx);
+                    let highlightJp = escapeHtml(sub.japanese || ''); let highlightZh = escapeHtml(sub.chinese || '');
+                    if (isMatch) { highlightJp = highlightJp.replace(regex, '<span class="highlight">$1</span>'); highlightZh = highlightZh.replace(regex, '<span class="highlight">$1</span>'); }
                     displayData.push({ sub, originalIndex: idx, isContext: !isMatch, highlightJp, highlightZh });
                 });
-
-                if (matchIndices.size > 0) showGlobalStatus(`找到 ${matchIndices.size} 個結果 (已展開前後文)`, 3000);
-                else showGlobalStatus(`未找到匹配內容`, 2000);
             }
             renderDisplayData(displayData);
         }
@@ -890,50 +580,34 @@
           if (renderAnimationId) cancelAnimationFrame(renderAnimationId);
           container.innerHTML = ''; 
           
-          const chunkSize = 100;
-          let currentIndex = 0;
-          
+          let currentIndex = 0; const chunkSize = 100;
           function renderNextChunk() {
             const chunk = displayData.slice(currentIndex, currentIndex + chunkSize);
             if (chunk.length === 0) {
-               updateFileInfo(`已顯示 ${displayData.length} 行結果`, 3000);
                if (!bilingualEnabled) document.body.classList.add('single-language');
                return;
             }
-            
-            const html = chunk.map(item => createSubtitleRowHTML(item)).join('');
-            container.insertAdjacentHTML('beforeend', html);
-            
-            const newlyAdded = container.querySelectorAll('.row:nth-child(n+' + (currentIndex + 1) + ') .note-box.has-content');
-            newlyAdded.forEach(box => autoResizeTextarea(box));
-
+            container.insertAdjacentHTML('beforeend', chunk.map(item => createSubtitleRowHTML(item)).join(''));
+            container.querySelectorAll('.row:nth-child(n+' + (currentIndex + 1) + ') .note-box.has-content').forEach(box => autoResizeTextarea(box));
             currentIndex += chunkSize;
-            updateProgress((currentIndex / displayData.length) * 100, `渲染中... ${Math.min(currentIndex, displayData.length)}/${displayData.length}`);
+            updateProgress((currentIndex / displayData.length) * 100);
             renderAnimationId = requestAnimationFrame(renderNextChunk); 
           }
           renderNextChunk();
         }
         
-        // 改善點 1: 套用防抖(Debounce)在搜尋框
-        document.getElementById('searchBox').addEventListener('input', debounce(function(){
-            const q = this.value.trim();
-            updateDisplay(q);
-        }, 300));
+        document.getElementById('searchBox').addEventListener('input', function(){ updateDisplay(this.value.trim()); });
 
-        // ==================== 全局事件委派：純原生終極無干擾版 ====================
+        // ==================== 事件處理與存檔 ====================
         const subtitlesContainer = document.getElementById('subtitles');
         let saveTimers = {};
 
         const saveNote = (noteBox) => {
             const index = parseInt(noteBox.dataset.index);
             const row = noteBox.closest('.row');
-            const subtitleDiv = row.querySelector('.subtitle');
             const val = noteBox.value.trim();
-            if (val) {
-              notesData[index] = val; noteBox.classList.add('has-content'); subtitleDiv.classList.add('has-written-note');
-            } else {
-              delete notesData[index]; noteBox.classList.remove('has-content'); subtitleDiv.classList.remove('has-written-note');
-            }
+            if (val) { notesData[index] = val; noteBox.classList.add('has-content'); row.querySelector('.subtitle').classList.add('has-written-note'); } 
+            else { delete notesData[index]; noteBox.classList.remove('has-content'); row.querySelector('.subtitle').classList.remove('has-written-note'); }
             updateNoteCount();
         };
 
@@ -945,200 +619,211 @@
                 saveTimers[index] = setTimeout(() => saveNote(e.target), 500);
             }
         });
+        subtitlesContainer.addEventListener('focusout', (e) => { if (e.target.classList.contains('note-box')) saveNote(e.target); });
 
-        subtitlesContainer.addEventListener('focusout', (e) => {
-            if (e.target.classList.contains('note-box')) saveNote(e.target);
-        });
+        // ==================== 🔍 查字典懸浮視窗邏輯 ====================
+        const dictPopup = document.createElement('div');
+        dictPopup.id = 'dictPopup';
+        dictPopup.innerHTML = '🔍 查字典';
+        document.body.appendChild(dictPopup);
+        let selectedWord = "";
 
-        subtitlesContainer.addEventListener('dragover', (e) => {
-            if (e.target.classList.contains('note-box')) { e.preventDefault(); e.target.style.borderColor = '#4CAF50'; }
-        });
-        
-        subtitlesContainer.addEventListener('dragleave', (e) => {
-            if (e.target.classList.contains('note-box')) e.target.style.borderColor = '';
-        });
-        
-        subtitlesContainer.addEventListener('drop', (e) => {
-            if (e.target.classList.contains('note-box')) {
-                e.preventDefault(); e.target.style.borderColor = '';
-                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                    showGlobalStatus('不支援直接拖曳檔案到筆記框喔！', 2000); return;
-                }
-                const text = e.dataTransfer.getData('text/plain');
-                if (text) {
-                    const startPos = e.target.selectionStart; const endPos = e.target.selectionEnd;
-                    const currentValue = e.target.value;
-                    let prefix = '';
-                    if (startPos > 0 && currentValue.charAt(startPos - 1) !== '\n') prefix = '\n'; 
-                    const newText = prefix + text;
-                    e.target.value = currentValue.substring(0, startPos) + newText + currentValue.substring(endPos);
-                    e.target.selectionStart = e.target.selectionEnd = startPos + newText.length;
-                    e.target.dispatchEvent(new Event('input', { bubbles: true })); 
-                    showGlobalStatus('文字已拖曳並自動換行', 1500);
-                }
-            }
+        document.addEventListener('mouseup', function(e) {
+          const selection = window.getSelection();
+          const text = selection.toString().trim();
+          
+          if (text.length > 0 && e.target.closest('.text-box')) {
+            selectedWord = text;
+            dictPopup.style.left = `${e.pageX}px`;
+            dictPopup.style.top = `${e.pageY - 35}px`;
+            dictPopup.style.display = 'block';
+          } else if (e.target !== dictPopup) {
+            dictPopup.style.display = 'none';
+          }
         });
 
-        // ==================== 匯入/匯出與其他功能 ====================
+        dictPopup.addEventListener('click', function() {
+          if (!selectedWord) return;
+          const url = `https://jisho.org/search/${encodeURIComponent(selectedWord)}`;
+          window.open(url, 'dictWin', 'width=450,height=600,top=100,left=100,scrollbars=yes');
+          dictPopup.style.display = 'none';
+        });
+
+        // ==================== 介面按鈕邏輯 ====================
         document.getElementById('bilingualBtn').addEventListener('click', function() {
-          bilingualEnabled = !bilingualEnabled;
-          this.textContent = bilingualEnabled ? '單語顯示' : '雙語顯示';
+          bilingualEnabled = !bilingualEnabled; this.textContent = bilingualEnabled ? '單語顯示' : '雙語顯示';
           document.body.classList.toggle('single-language', !bilingualEnabled);
           document.querySelectorAll('.note-box').forEach(noteBox => autoResizeTextarea(noteBox));
         });
 
         document.getElementById('toggleNotesBtn').addEventListener('click', function() {
-          notesVisible = !notesVisible;
-          this.textContent = notesVisible ? '隱藏筆記' : '顯示筆記';
+          notesVisible = !notesVisible; this.textContent = notesVisible ? '隱藏筆記' : '顯示筆記';
           document.body.classList.toggle('hide-notes', !notesVisible);
-          this.classList.toggle('active', !notesVisible);
-          
           if (notesVisible) document.querySelectorAll('.note-box').forEach(noteBox => autoResizeTextarea(noteBox));
           else document.querySelectorAll('.text-box').forEach(textBox => textBox.style.height = 'auto');
         });
 
+        const mainExportBtn = document.getElementById('mainExportBtn');
+        const exportMenu = document.getElementById('exportMenu');
+        mainExportBtn.addEventListener('click', (e) => { e.stopPropagation(); exportMenu.classList.toggle('show'); });
+        window.addEventListener('click', () => { if (exportMenu.classList.contains('show')) exportMenu.classList.remove('show'); });
+
         document.getElementById('importBtn').addEventListener('click', () => {
-          if(processedSubtitles.length === 0) return alert('請先上傳最少一個檔案');
+          if(processedSubtitles.length === 0) return alert('請先上傳檔案');
           document.getElementById('importFileInput').click();
         });
 
         document.getElementById('importFileInput').addEventListener('change', function(e) {
-          const file = e.target.files[0];
-          if (!file) return;
+          const file = e.target.files[0]; if (!file) return;
           const reader = new FileReader();
-          
           reader.onload = (ev) => {
             try {
               const doc = new DOMParser().parseFromString(ev.target.result, 'text/html');
               const exportItems = doc.querySelectorAll('.export-item');
-              if (exportItems.length === 0) { showError('無法識別的筆記格式，請確保這是從本工具匯出的筆記文件'); return; }
-
-              let importedCount = 0; let skippedCount = 0; let lastMatchIdx = -1; 
-              const normalizeText = (text) => text.replace(/\s+/g, '');
-
+              if (exportItems.length === 0) return alert('無法識別的格式，請確認是否為系統備份檔案。');
+              
+              let importedCount = 0;
               exportItems.forEach(item => {
-                const subtitleEl = item.querySelector('.export-note-subtitle');
+                const originalIndex = item.getAttribute('data-original-index');
                 const noteEl = item.querySelector('.export-note-content');
-                const timecodeEl = item.querySelector('.export-timecode'); 
-                const originalIndex = item.getAttribute('data-original-index'); 
-                const timecodeText = timecodeEl ? timecodeEl.textContent.replace('⏱', '').trim() : '';
-                
-                if (subtitleEl && noteEl) {
-                  const subText = subtitleEl.textContent.trim();
+                if (originalIndex !== null && noteEl) {
                   const noteText = noteEl.textContent.trim();
-                  let matchIdx = -1;
-
-                  if (originalIndex !== null && !isNaN(parseInt(originalIndex))) matchIdx = parseInt(originalIndex);
-                  else if (timecodeText) {
-                    matchIdx = processedSubtitles.findIndex(s => {
-                        const sTime = (s.startTime && s.endTime) ? `${s.startTime} --> ${s.endTime}` : '';
-                        return sTime === timecodeText;
-                    });
-                  }
-                  
-                  if (matchIdx === -1 && subText && noteText) {
-                    const targetSubText = normalizeText(subText);
-                    matchIdx = processedSubtitles.findIndex((s, idx) => {
-                      if (idx <= lastMatchIdx) return false;
-                      const t1 = normalizeText(s.chinese ? `${s.japanese}|${s.chinese}` : s.japanese);
-                      const t2 = normalizeText(s.chinese ? `${s.chinese}|${s.japanese}` : s.japanese);
-                      return t1 === targetSubText || t2 === targetSubText || normalizeText(s.japanese) === targetSubText || normalizeText(s.originalText) === targetSubText;
-                    });
-                    if (matchIdx === -1) {
-                      matchIdx = processedSubtitles.findIndex(s => {
-                        const t1 = normalizeText(s.chinese ? `${s.japanese}|${s.chinese}` : s.japanese);
-                        const t2 = normalizeText(s.chinese ? `${s.chinese}|${s.japanese}` : s.japanese);
-                        return t1 === targetSubText || t2 === targetSubText || normalizeText(s.japanese) === targetSubText || normalizeText(s.originalText) === targetSubText;
-                      });
-                    }
-                  }
-                  
-                  if (matchIdx !== -1 && matchIdx < processedSubtitles.length) {
-                    notesData[matchIdx] = noteText; lastMatchIdx = matchIdx; importedCount++;
-                  } else skippedCount++;
+                  const idx = parseInt(originalIndex);
+                  if (noteText && idx < processedSubtitles.length) { notesData[idx] = noteText; importedCount++; }
                 }
               });
-              
-              if (importedCount > 0) {
-                updateDisplay(); updateNoteCount();
-                showGlobalStatus(`成功導入 ${importedCount} 條筆記${skippedCount > 0 ? `，${skippedCount} 條因無對應內容未匹配` : ''}`, 4000);
-              } else showGlobalStatus('未成功導入任何筆記，請檢查文件是否匹配', 3000);
-            } catch (err) { showError('解析筆記文件時發生錯誤'); }
+              if (importedCount > 0) { updateDisplay(); updateNoteCount(); showGlobalStatus(`成功導入 ${importedCount} 條筆記！`); } 
+            } catch (err) { alert('解析筆記時發生錯誤'); }
           };
-          reader.readAsText(file, 'utf-8');
-          this.value = '';
+          reader.readAsText(file, 'utf-8'); this.value = '';
         });
 
+        // ==================== 匯出 HTML (高級卡片 + 經典橘色高亮) ====================
         document.getElementById('exportBtn').addEventListener('click', () => {
           const notes = Object.entries(notesData).filter(([i, n]) => n.trim());
-          const items = notes.map(([idx, note], i) => {
-            const s = processedSubtitles[idx];
-            const title = s.chinese ? `${s.japanese} | ${s.chinese}` : s.japanese;
+          if (notes.length === 0) return alert('目前沒有筆記可供匯出');
+
+          const items = notes.map(([idxStr, note], i) => {
+            const idx = parseInt(idxStr); const s = processedSubtitles[idx];
+            const hasZh = !!s.chinese;
             const timecode = (s.startTime && s.endTime) ? `${s.startTime} --> ${s.endTime}` : '';
-            const timecodeHtml = timecode ? `<div class="export-timecode" style="color:#666; font-size:12px; margin-bottom:6px; margin-left:24px;">⏱ ${escapeHtml(timecode)}</div>` : '';
-            
-            return `<div class="export-item" data-original-index="${idx}">
-              <div class="export-header" style="display:flex; align-items:baseline; gap:8px;">
-                <div class="export-number" style="font-weight:bold;">${i+1}.</div>
-                <div class="export-note-subtitle" style="font-weight:bold; color:#2c3e50;">${escapeHtml(title)}</div>
+            const timecodeHtml = timecode ? `<span class="time-badge">⏱ ${escapeHtml(timecode)}</span>` : '';
+
+            return `
+            <div class="export-item card" data-original-index="${idx}">
+              <div class="card-header">
+                <span class="idx-badge"># ${i+1} <span class="orig-idx">(原文行號: ${idx+1})</span></span>
+                ${timecodeHtml}
               </div>
-              ${timecodeHtml}
-              <div class="export-note-content" style="color:#e67e22; white-space:pre-wrap; background:#fff8e1; padding:10px; border-radius:4px; border-left:4px solid #ff9800; margin-bottom: 16px;">${escapeHtml(note)}</div>
-            </div><hr style="border:0; border-top:1px dashed #eee; margin:16px 0;" />`;
+              <div class="subtitle-text">
+                <div class="jp-text">${escapeHtml(s.japanese || s.originalText)}</div>
+                ${hasZh ? `<div class="zh-text">${escapeHtml(s.chinese)}</div>` : ''}
+              </div>
+              <div class="note-section">
+                <div class="note-label">📝 筆記內容</div>
+                <div class="export-note-content note-text">${escapeHtml(note)}</div>
+              </div>
+            </div>`;
           }).join('');
           
-          const html = `<!doctype html><html><head><meta charset="utf-8"><style>body{padding:20px;font-family:sans-serif;}</style></head>
-          <body><h2>${escapeHtml(currentFileName)} - 筆記匯出</h2><hr style="margin-bottom:20px;"/>${items}</body></html>`;
+          const html = `<!doctype html>
+          <html lang="zh">
+          <head>
+            <meta charset="utf-8">
+            <title>筆記備份_${escapeHtml(getSafeFileName())}</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+              body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f1f5f9; color: #334155; line-height: 1.6; padding: 40px 20px; margin: 0; }
+              .container { max-width: 800px; margin: 0 auto; }
+              .header { text-align: center; margin-bottom: 40px; }
+              .header h1 { color: #0f172a; font-size: 26px; font-weight: 800; margin: 0 0 12px 0; }
+              .header p { color: #64748b; font-size: 14px; margin: 0; background: #e2e8f0; display: inline-block; padding: 6px 16px; border-radius: 20px; }
+              .card { background: #ffffff; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; }
+              .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
+              .idx-badge { font-weight: 700; color: #475569; font-size: 15px; }
+              .orig-idx { font-weight: 500; color: #94a3b8; font-size: 13px; margin-left: 6px; }
+              .time-badge { background: #f8fafc; color: #64748b; padding: 4px 12px; border-radius: 20px; font-size: 12px; border: 1px solid #e2e8f0; }
+              .subtitle-text { margin-bottom: 20px; }
+              .jp-text { font-size: 18px; font-weight: 600; color: #1e293b; margin-bottom: 6px; }
+              .zh-text { font-size: 15px; color: #64748b; }
+              .note-section { background: #fff8e1; border-left: 4px solid #ff9800; padding: 16px 20px; border-radius: 0 8px 8px 0; }
+              .note-label { font-size: 12px; font-weight: 700; color: #d35400; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+              .note-text { font-size: 15px; color: #e65100; white-space: pre-wrap; font-weight: 600; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>${escapeHtml(getSafeFileName())}</h1>
+                <p>📝 專屬筆記備份檔（可重新導入系統） &nbsp;|&nbsp; 匯出時間：${new Date().toLocaleString()}</p>
+              </div>
+              ${items}
+            </div>
+          </body>
+          </html>`;
           
           const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
           const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-          a.download = `${currentFileName.split('.')[0]}_筆記導出.html`; a.click();
+          a.download = `${getSafeFileName()}_筆記備份.html`; a.click();
         });
 
-        document.getElementById('exportCsvBtn').addEventListener('click', () => {
-          if(processedSubtitles.length === 0) return alert('沒有資料可以匯出');
+        // ==================== 📕 PDF (全文對照) ====================
+        document.getElementById('exportPdfBtn').addEventListener('click', () => {
+          if (processedSubtitles.length === 0) return alert('目前沒有全文資料可供列印');
+
+          const items = processedSubtitles.map((sub, idx) => {
+            const note = notesData[idx] || "";
+            let hasZh = !!sub.chinese;
+            let jpClasses = hasZh ? 'jp-column has-divider' : 'jp-column full-width';
+            
+            let bilingualHtml = `
+              <div class="bilingual-container">
+                <div class="${jpClasses}">${escapeHtml(sub.japanese || sub.originalText)}</div>
+                ${hasZh ? `<div class="zh-column">${escapeHtml(sub.chinese)}</div>` : ''}
+              </div>`;
+            let noteHtml = note ? `<div class="note-box"><div class="note-label">📝 筆記</div><div class="note-content">${escapeHtml(note)}</div></div>` : '';
+            
+            return `<div class="row-item">${bilingualHtml}${noteHtml}</div>`;
+          }).join('');
           
-          let csvContent = '\uFEFF'; 
-          csvContent += "序號,時間軸,日文,中文,你的筆記\n";
-          const escapeCSV = (str) => {
-             if (str === null || str === undefined) return '""';
-             return `"${String(str).replace(/"/g, '""')}"`;
-          };
-
-          processedSubtitles.forEach((sub, idx) => {
-             const note = notesData[idx] || "";
-             const timecode = (sub.startTime && sub.endTime) ? `${sub.startTime} --> ${sub.endTime}` : "無";
-             csvContent += `${idx + 1},${escapeCSV(timecode)},${escapeCSV(sub.japanese)},${escapeCSV(sub.chinese)},${escapeCSV(note)}\n`;
-          });
-
-          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
-          const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-          a.download = `${currentFileName.split('.')[0]}_完整報表.csv`; a.click();
+          const html = `<!doctype html>
+          <html lang="zh">
+          <head>
+            <meta charset="utf-8">
+            <title>${escapeHtml(currentFileName)} - 全文講義</title>
+            <style>
+              @page { margin: 20mm 15mm; }
+              body { font-family: "Helvetica Neue", "Hiragino Sans", "Meiryo", Arial, sans-serif; background: #fdfdfd; color: #333; line-height: 1.6; margin: 0; padding: 20px; }
+              .document-header { text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid #e0e0e0; }
+              .document-header h1 { margin: 0; color: #1a1a1a; font-size: 26px; font-weight: 800; }
+              .document-header p { margin: 8px 0 0 0; color: #888; font-size: 13px; }
+              .row-item { background: #ffffff; padding: 16px 20px; margin-bottom: 12px; border-radius: 8px; page-break-inside: avoid; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid #f0f0f0; }
+              .bilingual-container { display: flex; gap: 24px; align-items: flex-start; }
+              .jp-column { flex: 1; width: 50%; font-size: 16px; font-weight: 600; color: #2c3e50; line-height: 1.7;}
+              .zh-column { flex: 1; width: 50%; font-size: 15px; color: #555; line-height: 1.7; padding-top: 1px; }
+              .has-divider { border-right: 1px solid #eaeaea; padding-right: 24px; }
+              .full-width { width: 100%; flex: none; }
+              .note-box { background: #fffaf0; border-left: 4px solid #f39c12; padding: 12px 16px; border-radius: 4px; margin-top: 12px; }
+              .note-label { font-size: 12px; font-weight: bold; color: #d35400; margin-bottom: 6px; }
+              .note-content { font-size: 14px; color: #444; white-space: pre-wrap; line-height: 1.6; }
+              @media print {
+                  body { background: #fff; padding: 0; }
+                  .row-item { box-shadow: none; border: none; border-bottom: 1px solid #eee; margin-bottom: 15px; padding: 15px 0; border-radius: 0; }
+                  .row-item:last-child { border-bottom: none; }
+                  .note-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: #fffaf0 !important; border-color: #f39c12 !important; padding: 10px 14px;}
+              }
+            </style>
+          </head>
+          <body>
+            <div class="document-header"><h1>${escapeHtml(getSafeFileName())}</h1><p>匯出時間：${new Date().toLocaleString()} &nbsp;|&nbsp; 總句數：${processedSubtitles.length}</p></div>
+            ${items}
+          </body></html>`;
+          
+          const printWindow = window.open('', '_blank'); printWindow.document.write(html); printWindow.document.close();
+          setTimeout(() => { printWindow.focus(); printWindow.print(); }, 250);
         });
         
-        window.addEventListener('beforeunload', function(e) {
-          if (noteCount > 0) { e.preventDefault(); e.returnValue = '有未匯出的筆記，確定離開？'; }
-        });
-        
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-          clearTimeout(resizeTimer);
-          resizeTimer = setTimeout(() => {
-             if (notesVisible) document.querySelectorAll('.note-box.has-content').forEach(noteBox => autoResizeTextarea(noteBox));
-          }, 300);
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-          updateFileInfo('請在上面選擇檔案，系統支援多種格式自動對齊。', 5000);
-        });
-
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Service Worker 註冊成功'))
-                .catch(err => console.log('Service Worker 註冊失敗', err));
-        });
-    }
+        window.addEventListener('beforeunload', function(e) { if (noteCount > 0) { e.preventDefault(); e.returnValue = '有未匯出的筆記，確定離開？'; } });
     </script>
 </body>
 </html>
