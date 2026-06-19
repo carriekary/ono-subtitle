@@ -291,13 +291,19 @@
         let kuroshiroInstance = null;
         let isKuroshiroReady = false;
 
-        async function initKuroshiro() {
+       async function initKuroshiro() {
             try {
                 updateUIStatus("正在下載日語字典分析器，請稍候...", 'loading');
-                kuroshiroInstance = new Kuroshiro();
-                await kuroshiroInstance.init(new KuromojiAnalyzer({
-                    dictPath: "https://unpkg.com/kuromoji@0.1.2/dict/"
+                
+                // 完美相容 1.2.0 版的 .default 結構與舊版結構
+                const KuroshiroClass = typeof Kuroshiro.default !== 'undefined' ? Kuroshiro.default : Kuroshiro;
+                const KuromojiAnalyzerClass = typeof KuromojiAnalyzer.default !== 'undefined' ? KuromojiAnalyzer.default : KuromojiAnalyzer;
+
+                kuroshiroInstance = new KuroshiroClass();
+                await kuroshiroInstance.init(new KuromojiAnalyzerClass({
+                    dictPath: "https://unpkg.com/kuromoji@0.1.2/dict/" 
                 }));
+                
                 isKuroshiroReady = true;
                 const container = document.getElementById('subtitles');
                 container.innerHTML = ''; 
