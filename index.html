@@ -10,7 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     
-    <script src="https://cdn.jsdelivr.net/npm/kuroshiro@1.2.0/dist/kuroshiro.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/kuroshiro@1.1.2/dist/kuroshiro.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/kuroshiro-analyzer-kuromoji@1.1.0/dist/kuroshiro-analyzer-kuromoji.min.js"></script>
 
     <style>
@@ -287,22 +287,26 @@
         let file1Data = { name: "", subtitles: [] };
         let file2Data = { name: "", subtitles: [] };
         
-        // ==================== Kuroshiro 初始化 ====================
         let kuroshiroInstance = null;
         let isKuroshiroReady = false;
 
-       async function initKuroshiro() {
+        async function initKuroshiro() {
             try {
                 updateUIStatus("正在下載日語字典分析器，請稍候...", 'loading');
                 
-                // 完美相容 1.2.0 版的 .default 結構與舊版結構
-                const KuroshiroClass = typeof Kuroshiro.default !== 'undefined' ? Kuroshiro.default : Kuroshiro;
-                const KuromojiAnalyzerClass = typeof KuromojiAnalyzer.default !== 'undefined' ? KuromojiAnalyzer.default : KuromojiAnalyzer;
-
-                kuroshiroInstance = new KuroshiroClass();
-                await kuroshiroInstance.init(new KuromojiAnalyzerClass({
+                kuroshiroInstance = new Kuroshiro();
+                
+                // 設定一個 10 秒的超時，防止無盡等待卡死網頁
+                const initPromise = kuroshiroInstance.init(new KuromojiAnalyzer({
                     dictPath: "https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/" 
                 }));
+                
+                const timeoutPromise = new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error("字典下載超時（超過 10 秒）")), 10000)
+                );
+
+                // 競速：看是初始化先完成，還是 10 秒先到
+                await Promise.race([initPromise, timeoutPromise]);
                 
                 isKuroshiroReady = true;
                 const container = document.getElementById('subtitles');
@@ -310,7 +314,7 @@
                 showGlobalStatus("日語注音系統準備就緒！");
             } catch (err) {
                 console.error("Kuroshiro 初始化失敗:", err);
-                showGlobalStatus("注音功能加載失敗，將使用純文字模式", "error");
+                showGlobalStatus(`注音功能加載失敗 (${err.message})，將使用純文字模式`, "error");
                 const container = document.getElementById('subtitles');
                 container.innerHTML = '';
             }
