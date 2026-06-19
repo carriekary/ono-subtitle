@@ -296,7 +296,7 @@
                 updateUIStatus("正在下載日語字典分析器，請稍候...", 'loading');
                 kuroshiroInstance = new Kuroshiro();
                 await kuroshiroInstance.init(new KuromojiAnalyzer({
-                    dictPath: "https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/"
+                    dictPath: "https://unpkg.com/kuromoji@0.1.2/dict/"
                 }));
                 isKuroshiroReady = true;
                 const container = document.getElementById('subtitles');
