@@ -10,8 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     
-    <script src="https://cdn.jsdelivr.net/npm/kuroshiro@1.1.2/dist/kuroshiro.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/kuroshiro-analyzer-kuromoji@1.1.0/dist/kuroshiro-analyzer-kuromoji.min.js"></script>
+    <!-- 日語注音引擎（kuromoji）改為動態載入，本機詞典優先 + 多 CDN 鏡像回退，詳見下方 initKuromoji() -->
 
     <style>
         :root {
@@ -82,7 +81,7 @@
         
         /* 日文平假名注音樣式與開關控制 */
         rt {
-          color: #7f8c8d;
+          color: #ff7043;
           font-size: 0.58em;
           user-select: none; /* 防止複製漢字時連同平假名一起選取 */
           padding-bottom: 2px;
@@ -209,7 +208,7 @@
     <header class="header" role="banner">
         <div class="header-left">
             <h1>小野字幕君</h1>
-            <p>支援：.srt / .ass / .docx / .txt / .pdf / .epub</p>
+            <p>支援：.srt / .ass / .docx / .txt / .pdf / .epub </p>
         </div>
         <div class="file-search-container" role="region" aria-label="檔案與搜尋">
             
@@ -287,39 +286,98 @@
         let file1Data = { name: "", subtitles: [] };
         let file2Data = { name: "", subtitles: [] };
         
-        let kuroshiroInstance = null;
-        let isKuroshiroReady = false;
+        // ==================== 日語注音引擎（kuromoji 本機優先 + 多 CDN 回退） ====================
+        let kuro = null;                 // kuromoji tokenizer 實例
+        let isKuroshiroReady = false;    // 注音引擎是否就緒（沿用原欄位名稱）
+        let kuroLoading = null;          // 防止重複初始化
 
-        async function initKuroshiro() {
-            try {
-                updateUIStatus("正在下載日語字典分析器，請稍候...", 'loading');
-                
-                kuroshiroInstance = new Kuroshiro();
-                
-                // 設定一個 10 秒的超時，防止無盡等待卡死網頁
-                const initPromise = kuroshiroInstance.init(new KuromojiAnalyzer({
-                    dictPath: "https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/" 
-                }));
-                
-                const timeoutPromise = new Promise((_, reject) => 
-                    setTimeout(() => reject(new Error("字典下載超時（超過 10 秒）")), 10000)
-                );
+        // 腳本來源：本機 kuromoji.js 優先，失敗再依序退回各 CDN 鏡像
+        // （gcore / fastly 在中國大陸通常可達，cdn / unpkg 作最後備援）
+        const KURO_SCRIPT_SOURCES = [
+            "kuromoji/kuromoji.js",
+            "https://gcore.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js",
+            "https://fastly.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js",
+            "https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js",
+            "https://unpkg.com/kuromoji@0.1.2/build/kuromoji.js"
+        ];
+        // 詞典來源：本機（需經本地伺服器開啟，完全離線）→ CDN 鏡像
+        const KURO_DICT_SOURCES = [
+            "kuromoji/dict",
+            "https://gcore.jsdelivr.net/npm/kuromoji@0.1.2/dict",
+            "https://fastly.jsdelivr.net/npm/kuromoji@0.1.2/dict"
+        ];
 
-                // 競速：看是初始化先完成，還是 10 秒先到
-                await Promise.race([initPromise, timeoutPromise]);
-                
-                isKuroshiroReady = true;
-                const container = document.getElementById('subtitles');
-                container.innerHTML = ''; 
-                showGlobalStatus("日語注音系統準備就緒！");
-            } catch (err) {
-                console.error("Kuroshiro 初始化失敗:", err);
-                showGlobalStatus(`注音功能加載失敗 (${err.message})，將使用純文字模式`, "error");
-                const container = document.getElementById('subtitles');
-                container.innerHTML = '';
-            }
+        function loadScriptFallback(urls) {
+            return new Promise((resolve, reject) => {
+                let i = 0;
+                const tryNext = () => {
+                    if (i >= urls.length) return reject(new Error("所有腳本來源皆失敗"));
+                    const s = document.createElement("script");
+                    s.src = urls[i];
+                    s.onload = () => resolve(urls[i]);
+                    s.onerror = () => { i++; tryNext(); };
+                    document.head.appendChild(s);
+                };
+                tryNext();
+            });
         }
-        document.addEventListener("DOMContentLoaded", initKuroshiro);
+
+        function buildTokenizer(dictPath) {
+            return new Promise((resolve, reject) => {
+                try {
+                    kuromoji.builder({ dicPath: dictPath }).build((err, tokenizer) => {
+                        if (err) reject(err); else resolve(tokenizer);
+                    });
+                } catch (e) { reject(e); }
+            });
+        }
+
+        // 片假名 → 平假名（僅平移 Unicode 0x30A1–0x30F6 區 -0x60，長音符等保留）
+        function katakanaToHiragana(str) {
+            return String(str).replace(/[\u30a1-\u30f6]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
+        }
+
+        // 依 kuromoji tokens 產生 <ruby>漢字<rt>平假名</rt></ruby>
+        function furiganaFromTokens(tokens) {
+            let html = "";
+            for (let i = 0; i < tokens.length; i++) {
+                const t = tokens[i];
+                const surface = t.surface_form || "";
+                const reading = t.reading || "";
+                const hasKanji = /[\u4e00-\u9faf]/.test(surface);
+                if (hasKanji && reading && reading !== surface) {
+                    html += "<ruby>" + escapeHtml(surface) + "<rt>" + escapeHtml(katakanaToHiragana(reading)) + "</rt></ruby>";
+                } else {
+                    html += escapeHtml(surface);
+                }
+            }
+            return html;
+        }
+
+        async function initKuromoji() {
+            if (kuroLoading) return kuroLoading;
+            kuroLoading = (async () => {
+                try {
+                    updateUIStatus("正在準備日語注音引擎...", "loading");
+                    await loadScriptFallback(KURO_SCRIPT_SOURCES);
+                    let tokenizer = null, lastErr = null;
+                    for (const dp of KURO_DICT_SOURCES) {
+                        try { tokenizer = await buildTokenizer(dp); break; }
+                        catch (e) { lastErr = e; }
+                    }
+                    if (!tokenizer) throw lastErr || new Error("詞典載入失敗");
+                    kuro = tokenizer;
+                    isKuroshiroReady = true;
+                    showGlobalStatus("日語注音系統準備就緒！");
+                    if (AppState.processedSubtitles.length) processAndDisplayData();
+                } catch (err) {
+                    console.error("注音引擎初始化失敗:", err);
+                    showGlobalStatus("注音功能加載失敗，將使用純文字模式", "error");
+                }
+            })();
+            return kuroLoading;
+        }
+        document.addEventListener("DOMContentLoaded", initKuromoji);
         
         // ==================== 工具函數 ====================
         const escapeHtml = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -446,27 +504,25 @@
 
           AppState.processedSubtitles = rawSubs;
 
-          // 新增：異步平假名注音生成處理
+          // 平假名注音生成處理（kuromoji 本機 / CDN）
           if (isKuroshiroReady && AppState.processedSubtitles.length > 0) {
             updateUIStatus("正在生成日語平假名注音，請稍候...", 'loading');
             await new Promise(resolve => setTimeout(resolve, 50));
             try {
-              await Promise.all(AppState.processedSubtitles.map(async (sub) => {
+              AppState.processedSubtitles.forEach((sub) => {
                 if (sub.japanese) {
                   try {
-                    sub.rubyHtml = await kuroshiroInstance.convert(sub.japanese, {
-                      mode: "furigana",
-                      to: "hiragana"
-                    });
+                    const tokens = kuro.tokenize(sub.japanese);
+                    sub.rubyHtml = furiganaFromTokens(tokens);
                   } catch (e) {
                     sub.rubyHtml = escapeHtml(sub.japanese);
                   }
                 } else {
                   sub.rubyHtml = '';
                 }
-              }));
+              });
             } catch (err) {
-              console.error("Kuroshiro 轉換出錯:", err);
+              console.error("注音轉換出錯:", err);
             }
           } else {
             AppState.processedSubtitles.forEach(sub => {
